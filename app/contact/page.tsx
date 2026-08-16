@@ -1,8 +1,52 @@
+"use client";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { FormEvent, useState } from "react";
 
 export default function ContactPage() {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    setSending(true);
+    setSent(false);
+    setError(false);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const response = await fetch("/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams(
+          Array.from(formData.entries()).map(([key, value]) => [
+            key,
+            String(value),
+          ])
+        ).toString(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Form submission failed");
+      }
+
+      form.reset();
+      setSent(true);
+    } catch {
+      setError(true);
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
     <>
       <Navbar />
@@ -47,7 +91,7 @@ export default function ContactPage() {
               <form
                 name="contact"
                 method="POST"
-                data-netlify="true"
+                onSubmit={handleSubmit}
                 className="mt-8 space-y-6"
               >
 
@@ -88,11 +132,25 @@ export default function ContactPage() {
                   className="w-full rounded-xl border border-slate-300 bg-white p-4 text-black outline-none placeholder:text-slate-400 focus:border-black"
                 />
 
+                {sent && (
+                  <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
+                    Thanks — your enquiry has been sent successfully.
+                  </div>
+                )}
+
+                {error && (
+                  <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+                    Something went wrong. Please try again or contact us
+                    directly.
+                  </div>
+                )}
+
                 <button
                   type="submit"
-                  className="rounded-xl bg-black px-8 py-4 font-semibold text-white transition hover:bg-slate-800"
+                  disabled={sending}
+                  className="rounded-xl bg-black px-8 py-4 font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  Send Enquiry
+                  {sending ? "Sending..." : "Send Enquiry"}
                 </button>
 
               </form>
@@ -104,6 +162,7 @@ export default function ContactPage() {
 
               {/* Email */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 transition hover:border-black hover:bg-white">
+
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-black">
                   <Mail className="text-white" size={24} />
                 </div>
@@ -115,10 +174,12 @@ export default function ContactPage() {
                 <p className="mt-3 text-slate-600">
                   sales@fogrod.co.uk
                 </p>
+
               </div>
 
               {/* Telephone */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 transition hover:border-black hover:bg-white">
+
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-black">
                   <Phone className="text-white" size={24} />
                 </div>
@@ -127,13 +188,15 @@ export default function ContactPage() {
                   Telephone
                 </h3>
 
-               <p className="mt-3 text-slate-600">
-  0800 181 4881
-</p>
+                <p className="mt-3 text-slate-600">
+                  0800 181 4881
+                </p>
+
               </div>
 
               {/* Location */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 transition hover:border-black hover:bg-white">
+
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-black">
                   <MapPin className="text-white" size={24} />
                 </div>
@@ -145,6 +208,7 @@ export default function ContactPage() {
                 <p className="mt-3 text-slate-600">
                   United Kingdom
                 </p>
+
               </div>
 
             </div>
