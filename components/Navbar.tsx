@@ -17,14 +17,15 @@ export default function Navbar() {
     0
   );
 
-  const links = [
-    { href: "/", label: "Home" },
-    { href: "/shop", label: "Shop" },
-    { href: "/applications", label: "Applications" },
-    { href: "/downloads", label: "Downloads" },
-    { href: "/support", label: "Support" },
-    { href: "/contact", label: "Contact" },
-  ];
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/shop", label: "Shop" },
+  { href: "/flygt-multitrode", label: "Flygt MultiTrode" },
+  { href: "/applications", label: "Applications" },
+  { href: "/downloads", label: "Downloads" },
+  { href: "/support", label: "Support" },
+  { href: "/contact", label: "Contact" },
+];
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
