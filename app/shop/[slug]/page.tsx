@@ -95,14 +95,12 @@ function ProductPageContent({
 
         {/* Product Hero */}
         <section className="border-b border-slate-200 bg-white">
-
           <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
 
             <div className="grid gap-16 lg:grid-cols-2 lg:items-center">
 
               {/* Product Image */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-sm lg:p-12">
-
                 <Image
                   src={product.image}
                   alt={product.name}
@@ -111,7 +109,6 @@ function ProductPageContent({
                   priority
                   className="mx-auto h-[400px] w-full object-contain transition duration-500 hover:scale-105 lg:h-[500px]"
                 />
-
               </div>
 
               {/* Product Details */}
@@ -131,7 +128,6 @@ function ProductPageContent({
 
                 {/* Price */}
                 <div className="mt-10">
-
                   <p className="text-sm uppercase tracking-widest text-slate-500">
                     Price
                   </p>
@@ -139,7 +135,6 @@ function ProductPageContent({
                   <p className="mt-2 text-5xl font-black text-black">
                     £{product.price} + VAT
                   </p>
-
                 </div>
 
                 {/* Product Measurements */}
@@ -267,7 +262,6 @@ function ProductPageContent({
             </div>
 
           </div>
-
         </section>
 
         {/* Technical Specifications */}
@@ -359,6 +353,7 @@ function ProductPageContent({
           {/* Specification Cards */}
           {product.specifications &&
             product.specifications.length > 0 && (
+
               <div className="mt-8 grid gap-5 md:grid-cols-2">
 
                 {product.specifications.map((spec) => (
@@ -377,11 +372,12 @@ function ProductPageContent({
                 ))}
 
               </div>
+
             )}
 
         </section>
 
-        {/* Technical Documentation */}
+               {/* Technical Documentation */}
         <section className="border-y border-slate-200 bg-slate-50">
 
           <div className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
@@ -395,80 +391,113 @@ function ProductPageContent({
             </h2>
 
             <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-              Technical documentation for the {product.name} will be
-              available here.
+              Access FOGRod® product information, installation documentation
+              and technical support for your system.
             </p>
 
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div
+              className={`mt-10 grid gap-6 ${
+                product.slug === "fogrod-1-6-30-g" ||
+                product.slug === "fogrod-2-5-30-g"
+                  ? "md:grid-cols-2 xl:grid-cols-4"
+                  : "md:grid-cols-3"
+              }`}
+            >
 
-              {/* Datasheet */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-black">
-
-                <h3 className="text-xl font-bold">
-                  Product Datasheet
-                </h3>
-
-                {isLIT100 ? (
-                  <>
-                    <p className="mt-3 text-slate-600">
-                      Technical datasheet for the LIT100 Level Indicator
-                      Transmitter.
-                    </p>
-
-                    <a
-                      href="/datasheets/LIT100-Product-Datasheet.pdf"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-6 inline-block cursor-pointer rounded-lg bg-black px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
-                    >
-                      Download Datasheet →
-                    </a>
-                  </>
-                ) : (
-                  <>
-                    <p className="mt-3 text-slate-600">
-                      FOGRod technical datasheet coming soon.
-                    </p>
-
-                    <span className="mt-6 inline-block rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-500">
-                      Coming Soon
-                    </span>
-                  </>
-                )}
-
-              </div>
-
-              {/* Installation Guide */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-black">
+              {/* FOGRod Brochure */}
+              <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-black hover:shadow-lg">
 
                 <h3 className="text-xl font-bold">
-                  Installation Guide
+                  FOGRod® Product Brochure
                 </h3>
 
-                <p className="mt-3 text-slate-600">
-                  Installation documentation coming soon.
+                <p className="mt-3 flex-1 leading-7 text-slate-600">
+                  Product information and an overview of the FOGRod®
+                  conductive level sensing system.
                 </p>
 
-                <span className="mt-6 inline-block rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-500">
-                  Coming Soon
-                </span>
+                <a
+                  href="/downloads/FOGRod-brochure-v2.0.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-block w-fit rounded-lg bg-black px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+                >
+                  View Brochure →
+                </a>
 
               </div>
+
+
+              {/* SHORT FOGRod INSTALLATION GUIDE */}
+              {(product.slug === "fogrod-1-6-30-g" ||
+                product.slug === "fogrod-2-5-30-g") && (
+                <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-black hover:shadow-lg">
+
+                  <h3 className="text-xl font-bold">
+                    FOGRod® Installation Guide
+                  </h3>
+
+                  <p className="mt-3 flex-1 leading-7 text-slate-600">
+                    Installation and wiring information for the 1.6ft
+                    3-electrode and 2.5ft 5-electrode FOGRod® systems.
+                  </p>
+
+                  <a
+                    href="/downloads/FOGRod-short-installation-guide.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-6 inline-block w-fit rounded-lg bg-black px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+                  >
+                    View Installation Guide →
+                  </a>
+
+                </div>
+              )}
+
 
               {/* Technical Manual */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:border-black">
+              <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-black hover:shadow-lg">
 
                 <h3 className="text-xl font-bold">
-                  Technical Manual
+                  FOGRod® & LIT Technical Manual
                 </h3>
 
-                <p className="mt-3 text-slate-600">
-                  Technical manual coming soon.
+                <p className="mt-3 flex-1 leading-7 text-slate-600">
+                  Technical manual covering FOGRod® and LIT level sensing
+                  systems, including installation, operation and technical
+                  information.
                 </p>
 
-                <span className="mt-6 inline-block rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-500">
-                  Coming Soon
-                </span>
+                <a
+                  href="/downloads/FOGRod-LIT-manual-v3.0.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-block w-fit rounded-lg bg-black px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+                >
+                  View Technical Manual →
+                </a>
+
+              </div>
+
+
+              {/* Technical Support */}
+              <div className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-black hover:shadow-lg">
+
+                <h3 className="text-xl font-bold">
+                  Technical Support
+                </h3>
+
+                <p className="mt-3 flex-1 leading-7 text-slate-600">
+                  Need help selecting, installing or commissioning your
+                  FOGRod® system? Our technical team can help.
+                </p>
+
+                <Link
+                  href="/support"
+                  className="mt-6 inline-block w-fit rounded-lg bg-black px-5 py-3 font-semibold text-white transition hover:bg-slate-800"
+                >
+                  Technical Support →
+                </Link>
 
               </div>
 
@@ -476,9 +505,7 @@ function ProductPageContent({
 
           </div>
 
-        </section>
-
-        {/* Related Products */}
+        </section>        {/* Related Products */}
         {relatedProducts.length > 0 && (
           <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
 
@@ -490,38 +517,42 @@ function ProductPageContent({
               Related Products
             </h2>
 
-            <div className="mt-10 grid gap-8 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
 
-              {relatedProducts.map((item) => (
-
+              {relatedProducts.map((related) => (
                 <Link
-                  key={item.slug}
-                  href={`/shop/${item.slug}`}
-                  className="group flex h-full flex-col rounded-3xl border border-slate-200 bg-slate-50 p-6 transition duration-300 hover:-translate-y-2 hover:border-black hover:bg-white hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)]"
+                  key={related.slug}
+                  href={`/shop/${related.slug}`}
+                  className="group overflow-hidden rounded-3xl border border-slate-200 bg-white transition hover:-translate-y-1 hover:border-black hover:shadow-lg"
                 >
 
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={400}
-                    height={400}
-                    className="mx-auto h-44 w-full object-contain transition duration-300 group-hover:scale-105"
-                  />
+                  <div className="bg-slate-50 p-6">
+                    <Image
+                      src={related.image}
+                      alt={related.name}
+                      width={500}
+                      height={500}
+                      className="h-48 w-full object-contain transition duration-300 group-hover:scale-105"
+                    />
+                  </div>
 
-                  <h3 className="mt-6 text-xl font-bold">
-                    {item.name}
-                  </h3>
+                  <div className="p-6">
 
-                  <p className="mt-auto pt-4 text-2xl font-black text-black">
-                    £{item.price} + VAT
-                  </p>
+                    <h3 className="text-xl font-bold">
+                      {related.name}
+                    </h3>
 
-                  <p className="mt-4 text-sm font-semibold text-slate-500 transition group-hover:text-black">
-                    View Product →
-                  </p>
+                    <p className="mt-2 text-2xl font-black">
+                      £{related.price} + VAT
+                    </p>
+
+                    <p className="mt-4 font-semibold text-slate-600 group-hover:text-black">
+                      View Product →
+                    </p>
+
+                  </div>
 
                 </Link>
-
               ))}
 
             </div>
@@ -532,6 +563,7 @@ function ProductPageContent({
       </main>
 
       <Footer />
+
     </>
   );
 }

@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { Check, ShoppingCart } from "lucide-react";
 import { useCart } from "@/store/cart";
 import { useUnit } from "@/components/UnitProvider";
 
@@ -24,6 +26,8 @@ export default function ProductCard({
   const addItem = useCart((state) => state.addItem);
   const { convertFeet } = useUnit();
 
+  const [added, setAdded] = useState(false);
+
   // Cable lengths are stored in FEET
   const displayCable = (cable: string | number) => {
     if (typeof cable === "number") {
@@ -37,6 +41,20 @@ export default function ProductCard({
     }
 
     return convertFeet(Number(match[0]));
+  };
+
+  const handleAddToBasket = () => {
+    addItem({
+      name: product.name,
+      price: product.price,
+      image: product.image,
+    });
+
+    setAdded(true);
+
+    setTimeout(() => {
+      setAdded(false);
+    }, 1800);
   };
 
   return (
@@ -93,6 +111,7 @@ export default function ProductCard({
 
           <div className="mt-6 space-y-3">
 
+            {/* View Product */}
             <Link
               href={`/shop/${product.slug}`}
               className="block w-full rounded-xl bg-black py-3 text-center font-semibold text-white transition hover:bg-slate-800"
@@ -100,17 +119,31 @@ export default function ProductCard({
               View Product
             </Link>
 
+            {/* Add to Basket */}
             <button
-              onClick={() =>
-                addItem({
-                  name: product.name,
-                  price: product.price,
-                  image: product.image,
-                })
-              }
-              className="w-full rounded-xl border border-slate-300 bg-white py-3 font-semibold text-black transition hover:border-black hover:bg-slate-50"
+              type="button"
+              onClick={handleAddToBasket}
+              className={`flex w-full items-center justify-center gap-2 rounded-xl border py-3 font-semibold transition-all duration-300 ${
+                added
+                  ? "scale-[1.03] border-green-500 bg-green-500 text-white shadow-lg shadow-green-500/25"
+                  : "border-slate-300 bg-white text-black hover:border-black hover:bg-slate-50"
+              }`}
             >
-              Add to Basket
+              {added ? (
+                <>
+                  <Check
+                    size={20}
+                    strokeWidth={3}
+                    className="animate-bounce"
+                  />
+                  <span>Added to Basket!</span>
+                </>
+              ) : (
+                <>
+                  <ShoppingCart size={19} />
+                  <span>Add to Basket</span>
+                </>
+              )}
             </button>
 
           </div>
