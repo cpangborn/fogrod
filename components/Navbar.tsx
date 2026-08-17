@@ -58,7 +58,7 @@ export default function Navbar() {
         </Link>
 
         {/* DESKTOP NAVIGATION */}
-        <nav className="ml-auto flex items-center gap-4 xl:gap-6">
+        <nav className="ml-auto hidden items-center gap-4 lg:flex xl:gap-6">
 
           {links.map((link) => (
             <Link
