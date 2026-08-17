@@ -7,6 +7,12 @@ export async function POST(req: Request) {
   try {
     const { items } = await req.json();
 
+    const taxRateId = process.env.STRIPE_VAT_RATE_ID;
+
+    if (!taxRateId) {
+      throw new Error("STRIPE_VAT_RATE_ID is not configured");
+    }
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
 
@@ -24,11 +30,13 @@ export async function POST(req: Request) {
         },
 
         quantity: item.quantity,
+
+        tax_rates: [taxRateId],
       })),
 
-      success_url: "http://localhost:3000/success",
+      success_url: "https://fogrod.co.uk/succes",
 
-      cancel_url: "http://localhost:3000/basket",
+      cancel_url: "https://fogrod.co.uk/basket",
     });
 
     return NextResponse.json({

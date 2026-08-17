@@ -13,10 +13,14 @@ export default function BasketPage() {
     removeItem,
   } = useCart();
 
-  const total = items.reduce(
+  // Prices stored in the products are EXCLUDING VAT
+  const subtotal = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const vat = subtotal * 0.2;
+  const total = subtotal + vat;
 
   return (
     <>
@@ -80,7 +84,11 @@ export default function BasketPage() {
                       </h2>
 
                       <p className="mt-2 text-xl font-bold text-black">
-                        £{item.price}
+                        £{item.price.toFixed(2)}
+                      </p>
+
+                      <p className="mt-1 text-sm text-slate-500">
+                        Price excluding VAT
                       </p>
 
                     </div>
@@ -121,10 +129,37 @@ export default function BasketPage() {
 
               </div>
 
-              {/* Total */}
+              {/* Order Summary */}
               <div className="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-8">
 
-                <div className="flex items-center justify-between">
+                <h2 className="mb-6 text-3xl font-black">
+                  Order Summary
+                </h2>
+
+                {/* Subtotal */}
+                <div className="flex items-center justify-between border-b border-slate-200 py-4">
+                  <span className="text-lg text-slate-600">
+                    Subtotal
+                  </span>
+
+                  <span className="text-xl font-bold">
+                    £{subtotal.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* VAT */}
+                <div className="flex items-center justify-between border-b border-slate-200 py-4">
+                  <span className="text-lg text-slate-600">
+                    VAT (20%)
+                  </span>
+
+                  <span className="text-xl font-bold">
+                    £{vat.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Total */}
+                <div className="flex items-center justify-between py-6">
 
                   <h2 className="text-3xl font-black">
                     Total
@@ -154,7 +189,7 @@ export default function BasketPage() {
                       alert("Unable to start checkout.");
                     }
                   }}
-                  className="mt-8 w-full rounded-xl bg-black py-4 text-lg font-bold text-white transition hover:bg-slate-800"
+                  className="mt-4 w-full rounded-xl bg-black py-4 text-lg font-bold text-white transition hover:bg-slate-800"
                 >
                   Proceed to Checkout
                 </button>
