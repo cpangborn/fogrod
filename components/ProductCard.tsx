@@ -25,7 +25,7 @@ export default function ProductCard({ product }: { product: Product }) {
   const { user, loading } = useAuth();
   const [added, setAdded] = useState(false);
 
-  const price = tradePrice(product.price, user);
+  const displayPrice = tradePrice(product.price, user);
   const isTrade = isPandSTankers(user);
 
   const displayCable = (cable: string | number) => {
@@ -36,7 +36,8 @@ export default function ProductCard({ product }: { product: Product }) {
   };
 
   const handleAddToBasket = () => {
-    addItem({ name: product.name, price, image: product.image });
+    // Keep the base retail price in the cart. The basket applies the trade discount once.
+    addItem({ name: product.name, price: product.price, image: product.image });
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
   };
@@ -64,7 +65,7 @@ export default function ProductCard({ product }: { product: Product }) {
           {isTrade && !loading ? (
             <div>
               <div className="text-sm font-semibold text-slate-400 line-through">£{product.price.toFixed(2)}</div>
-              <div className="text-3xl font-black text-black">£{price.toFixed(2)} + VAT</div>
+              <div className="text-3xl font-black text-black">£{displayPrice.toFixed(2)} + VAT</div>
               <div className="mt-1 text-sm font-bold text-green-700">30% Trade Price</div>
             </div>
           ) : (
