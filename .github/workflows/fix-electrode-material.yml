@@ -1,0 +1,46 @@
+name: Correct electrode material
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  correct-material:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Replace incorrect material description
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts or path.suffix not in {'.ts', '.tsx', '.md', '.json'}:
+                  continue
+              try:
+                  text = path.read_text()
+              except UnicodeDecodeError:
+                  continue
+              updated = text.replace('316 Stainless Steel', 'ALN6X')
+              if updated != text:
+                  path.write_text(updated)
+          PY
+
+      - name: Commit correction
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "No incorrect material text found."
+            exit 0
+          fi
+          git add .
+          git commit -m "Correct electrode material to ALN6X"
+          git push
