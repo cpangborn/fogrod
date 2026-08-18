@@ -21,7 +21,7 @@ export default function ContactPage() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("/__forms.html", {
+      const response = await fetch("/contact-form.html", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -75,13 +75,12 @@ export default function ContactPage() {
         <section className="mx-auto max-w-7xl px-6 py-20">
           <div className="grid gap-12 lg:grid-cols-2">
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8">
-              <h2 className="text-3xl font-bold">
-                Send us a message
-              </h2>
+              <h2 className="text-3xl font-bold">Send us a message</h2>
 
               <form
                 name="contact"
                 method="POST"
+                data-netlify="true"
                 onSubmit={handleSubmit}
                 className="mt-8 space-y-6"
               >
