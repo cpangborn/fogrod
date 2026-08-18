@@ -21,7 +21,7 @@ export default function ContactPage() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("/contact-form.html", {
+      const response = await fetch("/__forms.html", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -52,11 +52,8 @@ export default function ContactPage() {
       <Navbar />
 
       <main className="min-h-screen bg-white text-black">
-
-        {/* Hero */}
         <section className="border-b border-slate-200 bg-white">
           <div className="mx-auto max-w-7xl px-6 py-24">
-
             <p className="font-semibold uppercase tracking-[0.35em] text-slate-500">
               CONTACT
             </p>
@@ -72,18 +69,12 @@ export default function ContactPage() {
               support or help selecting the correct FOGRod® system, we'd be
               happy to help.
             </p>
-
           </div>
         </section>
 
-        {/* Contact */}
         <section className="mx-auto max-w-7xl px-6 py-20">
-
           <div className="grid gap-12 lg:grid-cols-2">
-
-            {/* Form */}
             <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8">
-
               <h2 className="text-3xl font-bold">
                 Send us a message
               </h2>
@@ -91,11 +82,9 @@ export default function ContactPage() {
               <form
                 name="contact"
                 method="POST"
-                data-netlify="true"
                 onSubmit={handleSubmit}
                 className="mt-8 space-y-6"
               >
-
                 <input
                   type="hidden"
                   name="form-name"
@@ -153,71 +142,36 @@ export default function ContactPage() {
                 >
                   {sending ? "Sending..." : "Send Enquiry"}
                 </button>
-
               </form>
-
             </div>
 
-            {/* Contact Details */}
             <div className="space-y-8">
-
-              {/* Email */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 transition hover:border-black hover:bg-white">
-
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-black">
                   <Mail className="text-white" size={24} />
                 </div>
-
-                <h3 className="text-2xl font-bold">
-                  Email
-                </h3>
-
-                <p className="mt-3 text-slate-600">
-                  sales@fogrod.co.uk
-                </p>
-
+                <h3 className="text-2xl font-bold">Email</h3>
+                <p className="mt-3 text-slate-600">sales@fogrod.co.uk</p>
               </div>
 
-              {/* Telephone */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 transition hover:border-black hover:bg-white">
-
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-black">
                   <Phone className="text-white" size={24} />
                 </div>
-
-                <h3 className="text-2xl font-bold">
-                  Telephone
-                </h3>
-
-                <p className="mt-3 text-slate-600">
-                  0800 181 4881
-                </p>
-
+                <h3 className="text-2xl font-bold">Telephone</h3>
+                <p className="mt-3 text-slate-600">0800 181 4881</p>
               </div>
 
-              {/* Location */}
               <div className="rounded-3xl border border-slate-200 bg-slate-50 p-8 transition hover:border-black hover:bg-white">
-
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-black">
                   <MapPin className="text-white" size={24} />
                 </div>
-
-                <h3 className="text-2xl font-bold">
-                  Location
-                </h3>
-
-                <p className="mt-3 text-slate-600">
-                  United Kingdom
-                </p>
-
+                <h3 className="text-2xl font-bold">Location</h3>
+                <p className="mt-3 text-slate-600">United Kingdom</p>
               </div>
-
             </div>
-
           </div>
-
         </section>
-
       </main>
 
       <Footer />
