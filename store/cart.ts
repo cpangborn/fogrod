@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 export type CartItem = {
   name: string;
@@ -11,64 +12,57 @@ export type CartItem = {
 
 type CartStore = {
   items: CartItem[];
-
   addItem: (item: Omit<CartItem, "quantity">) => void;
-
   removeItem: (name: string) => void;
-
   increaseQuantity: (name: string) => void;
-
   decreaseQuantity: (name: string) => void;
-
   clearCart: () => void;
 };
 
-export const useCart = create<CartStore>((set) => ({
-  items: [],
+export const useCart = create<CartStore>()(
+  persist(
+    (set) => ({
+      items: [],
 
-  addItem: (item) =>
-    set((state) => {
-      const existing = state.items.find((i) => i.name === item.name);
+      addItem: (item) =>
+        set((state) => {
+          const existing = state.items.find((i) => i.name === item.name);
 
-      if (existing) {
-        return {
+          if (existing) {
+            return {
+              items: state.items.map((i) =>
+                i.name === item.name ? { ...i, quantity: i.quantity + 1 } : i
+              ),
+            };
+          }
+
+          return { items: [...state.items, { ...item, quantity: 1 }] };
+        }),
+
+      removeItem: (name) =>
+        set((state) => ({ items: state.items.filter((i) => i.name !== name) })),
+
+      increaseQuantity: (name) =>
+        set((state) => ({
           items: state.items.map((i) =>
-            i.name === item.name
-              ? { ...i, quantity: i.quantity + 1 }
-              : i
+            i.name === name ? { ...i, quantity: i.quantity + 1 } : i
           ),
-        };
-      }
+        })),
 
-      return {
-        items: [...state.items, { ...item, quantity: 1 }],
-      };
+      decreaseQuantity: (name) =>
+        set((state) => ({
+          items: state.items
+            .map((i) =>
+              i.name === name ? { ...i, quantity: i.quantity - 1 } : i
+            )
+            .filter((i) => i.quantity > 0),
+        })),
+
+      clearCart: () => set({ items: [] }),
     }),
-
-  removeItem: (name) =>
-    set((state) => ({
-      items: state.items.filter((i) => i.name !== name),
-    })),
-
-  increaseQuantity: (name) =>
-    set((state) => ({
-      items: state.items.map((i) =>
-        i.name === name
-          ? { ...i, quantity: i.quantity + 1 }
-          : i
-      ),
-    })),
-
-  decreaseQuantity: (name) =>
-    set((state) => ({
-      items: state.items
-        .map((i) =>
-          i.name === name
-            ? { ...i, quantity: i.quantity - 1 }
-            : i
-        )
-        .filter((i) => i.quantity > 0),
-    })),
-
-  clearCart: () => set({ items: [] }),
-}));
+    {
+      name: "fogrod-cart",
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
