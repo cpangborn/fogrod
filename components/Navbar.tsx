@@ -47,7 +47,7 @@ export default function Navbar() {
         </nav>
 
         <div className="ml-4 flex shrink-0 items-center gap-2 xl:ml-6 xl:gap-3">
-          <Link href="/trade-login" onClick={closeMobileMenu} aria-label="Trade account" className={`hidden h-11 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition lg:flex ${isTrade ? "border-black bg-black text-white" : "border-slate-300 text-slate-700 hover:border-black hover:text-black"}`}>
+          <Link href={isTrade ? "/trade-account" : "/trade-login"} onClick={closeMobileMenu} aria-label="Trade account" className={`hidden h-11 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition lg:flex ${isTrade ? "border-black bg-black text-white" : "border-slate-300 text-slate-700 hover:border-black hover:text-black"}`}>
             <UserRound size={17} />
             {isTrade ? "P&S Trade" : "Trade Login"}
           </Link>
@@ -96,7 +96,10 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link href="/trade-login" onClick={closeMobileMenu} className="mt-5 flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-6 py-4 text-center font-semibold text-black transition hover:border-black">
+              <Link href="/trade-request" onClick={closeMobileMenu} className="mt-5 rounded-xl border border-slate-300 px-6 py-4 text-center font-semibold text-black transition hover:border-black">
+                Request a Trade Account
+              </Link>
+              <Link href={isTrade ? "/trade-account" : "/trade-login"} onClick={closeMobileMenu} className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-6 py-4 text-center font-semibold text-black transition hover:border-black">
                 <UserRound size={18} />
                 {isTrade ? "P&S Trade Account" : "Trade Login"}
               </Link>
