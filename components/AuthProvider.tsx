@@ -7,6 +7,7 @@ import {
   login,
   logout,
   requestPasswordRecovery,
+  updateUser,
 } from "@netlify/identity";
 
 type AuthContextValue = {
@@ -15,6 +16,7 @@ type AuthContextValue = {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  changePassword: (password: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -62,9 +64,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await requestPasswordRecovery(email);
   }
 
+  async function changePassword(password: string) {
+    const updatedUser = await updateUser({ password });
+    setUser(updatedUser);
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signOut, resetPassword }}
+      value={{
+        user,
+        loading,
+        signIn,
+        signOut,
+        resetPassword,
+        changePassword,
+      }}
     >
       {children}
     </AuthContext.Provider>
