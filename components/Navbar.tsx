@@ -2,13 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShoppingCart, Menu, X, UserRound, MessageCircle } from "lucide-react";
+import { ShoppingCart, Menu, X, UserRound, MessageCircle, Phone } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "../store/cart";
 import { useUnit } from "../components/UnitProvider";
 import { isPandSTankers, useAuth } from "../components/AuthProvider";
-
-const whatsappUrl = "https://wa.me/447584193308?text=Hi%20FOGRod%2C%20I%27d%20like%20some%20help%20with%20your%20products.";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -16,6 +14,7 @@ export default function Navbar() {
   const { unit, setUnit } = useUnit();
   const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const totalItems = items.reduce((total, item) => total + item.quantity, 0);
   const isTrade = isPandSTankers(user);
@@ -112,16 +111,39 @@ export default function Navbar() {
         )}
       </header>
 
-      <a
-        href={whatsappUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Chat with FOGRod on WhatsApp"
+      {chatOpen && (
+        <div className="fixed bottom-20 right-5 z-[70] w-[calc(100vw-2.5rem)] max-w-sm rounded-2xl border border-slate-200 bg-white p-5 shadow-2xl">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-lg font-bold text-black">Chat with FOGRod</p>
+              <p className="mt-1 text-sm text-slate-500">Need help? Give us a call or message us.</p>
+            </div>
+            <button type="button" onClick={() => setChatOpen(false)} aria-label="Close chat" className="rounded-lg p-1 text-slate-400 hover:text-black">
+              <X size={20} />
+            </button>
+          </div>
+          <div className="mt-5 rounded-xl bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">FOGRod Support</p>
+            <a href="tel:+447584193308" className="mt-2 flex items-center gap-2 text-xl font-bold text-black hover:underline">
+              <Phone size={20} />
+              07584 193308
+            </a>
+            <a href="https://wa.me/447584193308" target="_blank" rel="noopener noreferrer" className="mt-3 flex items-center justify-center rounded-xl bg-black px-4 py-3 text-sm font-bold text-white hover:bg-slate-800">
+              Message us on WhatsApp
+            </a>
+          </div>
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={() => setChatOpen((open) => !open)}
+        aria-label="Chat with FOGRod"
         className="fixed bottom-5 right-5 z-[60] flex items-center gap-2 rounded-full bg-black px-5 py-3 text-sm font-bold text-white shadow-lg transition hover:bg-slate-800"
       >
         <MessageCircle size={19} />
         Chat with FOGRod
-      </a>
+      </button>
     </>
   );
 }
