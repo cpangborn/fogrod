@@ -45,7 +45,7 @@ export default function Navbar() {
             </Link>
           ))}
           <Link href="/trade-request" className={`whitespace-nowrap rounded-xl border border-black px-3 py-2 text-sm font-bold transition ${pathname === "/trade-request" ? "bg-black text-white" : "bg-white text-black hover:bg-black hover:text-white"}`}>
-            Trade Account
+            Request Trade Account
           </Link>
         </nav>
 
