@@ -7,15 +7,18 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/components/AuthProvider";
 
 export default function TradeLoginPage() {
-  const { signIn, user, loading } = useAuth();
+  const { signIn, user, loading, resetPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [signingIn, setSigningIn] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setMessage("");
     setSigningIn(true);
 
     try {
@@ -25,6 +28,29 @@ export default function TradeLoginPage() {
       setError(err?.message || "Unable to sign in. Please check your details.");
     } finally {
       setSigningIn(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    if (!email) {
+      setError("Enter your email address first.");
+      return;
+    }
+
+    setError("");
+    setMessage("");
+    setResetting(true);
+
+    try {
+      await resetPassword(email);
+      setMessage("Password reset instructions have been sent to your email.");
+    } catch (err: any) {
+      setError(
+        err?.message ||
+          "Unable to send password reset instructions. Please contact FOGRod."
+      );
+    } finally {
+      setResetting(false);
     }
   }
 
@@ -89,12 +115,27 @@ export default function TradeLoginPage() {
                 </div>
               )}
 
+              {message && (
+                <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">
+                  {message}
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={signingIn}
                 className="w-full rounded-xl bg-black py-4 font-bold text-white disabled:opacity-50"
               >
                 {signingIn ? "Signing in…" : "Sign In"}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={resetting}
+                className="w-full text-sm font-semibold text-slate-600 underline underline-offset-4 hover:text-black disabled:opacity-50"
+              >
+                {resetting ? "Sending reset email…" : "Forgot password?"}
               </button>
             </form>
           )}
