@@ -57,11 +57,11 @@ export default function ShopPage() {
 
             <div className="rounded-2xl border border-slate-200 bg-white p-6 text-center transition hover:border-black hover:shadow-sm">
               <p className="text-4xl font-black text-black">
-                316
+                ALN6X
               </p>
 
               <p className="mt-2 text-sm uppercase tracking-widest text-slate-500">
-                Stainless Steel
+                Electrode Material
               </p>
             </div>
 
