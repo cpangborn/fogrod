@@ -10,6 +10,18 @@ import {
   updateUser,
 } from "@netlify/identity";
 
+export type Address = {
+  line1: string;
+  line2: string;
+  city: string;
+  postcode: string;
+};
+
+export type TradeAccountData = {
+  billingAddress?: Address;
+  deliveryAddress?: Address;
+};
+
 type AuthContextValue = {
   user: any | null;
   loading: boolean;
@@ -17,6 +29,7 @@ type AuthContextValue = {
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   changePassword: (password: string) => Promise<void>;
+  saveTradeAccountData: (data: TradeAccountData) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -69,6 +82,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(updatedUser);
   }
 
+  async function saveTradeAccountData(data: TradeAccountData) {
+    if (!user) throw new Error("You must be signed in.");
+
+    const existingMetadata = user.user_metadata || {};
+    const existingTradeData = existingMetadata.tradeAccount || {};
+
+    const updatedUser = await updateUser({
+      data: {
+        ...existingMetadata,
+        tradeAccount: {
+          ...existingTradeData,
+          ...data,
+        },
+      },
+    });
+
+    setUser(updatedUser);
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -78,6 +110,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
         resetPassword,
         changePassword,
+        saveTradeAccountData,
       }}
     >
       {children}
@@ -97,4 +130,8 @@ export function isPandSTankers(user: any | null) {
 
 export function tradePrice(price: number, user: any | null) {
   return isPandSTankers(user) ? Math.round(price * 0.7 * 100) / 100 : price;
+}
+
+export function getTradeAccountData(user: any | null): TradeAccountData {
+  return user?.user_metadata?.tradeAccount || {};
 }
