@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@netlify/identity": "^1.2.0",
     "@stripe/stripe-js": "^9.10.0",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",
