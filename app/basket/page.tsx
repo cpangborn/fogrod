@@ -4,18 +4,48 @@ import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../../components/Navbar";
 import { useCart } from "../../store/cart";
-import { isPandSTankers, tradePrice, useAuth } from "../../components/AuthProvider";
-import { useState } from "react";
+import { getTradeAccountData, isPandSTankers, tradePrice, useAuth, Address } from "../../components/AuthProvider";
+import { useEffect, useState } from "react";
+
+const emptyAddress: Address = { line1: "", line2: "", city: "", postcode: "" };
+
+function AddressFields({ title, value, onChange }: { title: string; value: Address; onChange: (value: Address) => void }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+      <h4 className="text-lg font-black">{title}</h4>
+      <div className="mt-4 space-y-3">
+        <input value={value.line1} onChange={(e) => onChange({ ...value, line1: e.target.value })} placeholder="Address line 1" required className="w-full rounded-xl border border-slate-300 bg-white p-4 outline-none focus:border-black" />
+        <input value={value.line2} onChange={(e) => onChange({ ...value, line2: e.target.value })} placeholder="Address line 2 (optional)" className="w-full rounded-xl border border-slate-300 bg-white p-4 outline-none focus:border-black" />
+        <div className="grid gap-3 sm:grid-cols-2">
+          <input value={value.city} onChange={(e) => onChange({ ...value, city: e.target.value })} placeholder="Town / City" required className="w-full rounded-xl border border-slate-300 bg-white p-4 outline-none focus:border-black" />
+          <input value={value.postcode} onChange={(e) => onChange({ ...value, postcode: e.target.value })} placeholder="Postcode" required className="w-full rounded-xl border border-slate-300 bg-white p-4 outline-none focus:border-black" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function BasketPage() {
   const { items, increaseQuantity, decreaseQuantity, removeItem, clearCart } = useCart();
   const { user } = useAuth();
   const isTrade = isPandSTankers(user);
-  const [deliveryAddress, setDeliveryAddress] = useState("");
+  const [billingAddress, setBillingAddress] = useState<Address>(emptyAddress);
+  const [deliveryAddress, setDeliveryAddress] = useState<Address>(emptyAddress);
+  const [sameAsBilling, setSameAsBilling] = useState(true);
   const [purchaseOrder, setPurchaseOrder] = useState("");
   const [placingOrder, setPlacingOrder] = useState(false);
   const [orderMessage, setOrderMessage] = useState("");
   const [orderError, setOrderError] = useState("");
+
+  useEffect(() => {
+    if (!isTrade || !user) return;
+    const saved = getTradeAccountData(user);
+    if (saved.billingAddress) setBillingAddress({ ...emptyAddress, ...saved.billingAddress });
+    if (saved.deliveryAddress) {
+      setDeliveryAddress({ ...emptyAddress, ...saved.deliveryAddress });
+      setSameAsBilling(false);
+    }
+  }, [isTrade, user]);
 
   const subtotal = items.reduce((sum, item) => sum + tradePrice(item.price, user) * item.quantity, 0);
   const vat = subtotal * 0.2;
@@ -25,18 +55,17 @@ export default function BasketPage() {
     setPlacingOrder(true);
     setOrderMessage("");
     setOrderError("");
+    const finalDelivery = sameAsBilling ? billingAddress : deliveryAddress;
 
     try {
       const response = await fetch("/api/order-account", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, deliveryAddress, purchaseOrder }),
+        body: JSON.stringify({ items, billingAddress, deliveryAddress: finalDelivery, purchaseOrder }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Unable to place order.");
-
       setOrderMessage(`Order ${data.orderNumber} has been placed on account. We will confirm it by email.`);
-      setDeliveryAddress("");
       setPurchaseOrder("");
       clearCart();
     } catch (error: any) {
@@ -65,20 +94,13 @@ export default function BasketPage() {
               <div className="mt-12 space-y-6">
                 {items.map((item) => (
                   <div key={item.name} className="flex flex-col items-center gap-6 rounded-3xl border border-slate-200 bg-slate-50 p-6 transition hover:border-black hover:bg-white md:flex-row">
-                    <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-white p-3">
-                      <Image src={item.image} alt={item.name} width={140} height={140} className="h-full w-full object-contain" />
-                    </div>
+                    <div className="flex h-32 w-32 items-center justify-center rounded-2xl bg-white p-3"><Image src={item.image} alt={item.name} width={140} height={140} className="h-full w-full object-contain" /></div>
                     <div className="flex-1 text-center md:text-left">
                       <h2 className="text-2xl font-bold">{item.name}</h2>
                       <p className="mt-2 text-xl font-bold">£{tradePrice(item.price, user).toFixed(2)}</p>
-                      {isTrade && <p className="mt-1 text-sm font-semibold text-green-700">30% trade price · excluding VAT</p>}
-                      {!isTrade && <p className="mt-1 text-sm text-slate-500">Price excluding VAT</p>}
+                      {isTrade ? <p className="mt-1 text-sm font-semibold text-green-700">30% trade price · excluding VAT</p> : <p className="mt-1 text-sm text-slate-500">Price excluding VAT</p>}
                     </div>
-                    <div className="flex items-center gap-3">
-                      <button onClick={() => decreaseQuantity(item.name)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl font-bold transition hover:border-black hover:bg-black hover:text-white">−</button>
-                      <span className="w-8 text-center text-xl font-bold">{item.quantity}</span>
-                      <button onClick={() => increaseQuantity(item.name)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl font-bold transition hover:border-black hover:bg-black hover:text-white">+</button>
-                    </div>
+                    <div className="flex items-center gap-3"><button onClick={() => decreaseQuantity(item.name)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl font-bold transition hover:border-black hover:bg-black hover:text-white">−</button><span className="w-8 text-center text-xl font-bold">{item.quantity}</span><button onClick={() => increaseQuantity(item.name)} className="flex h-10 w-10 items-center justify-center rounded-lg border border-slate-300 bg-white text-xl font-bold transition hover:border-black hover:bg-black hover:text-white">+</button></div>
                     <button onClick={() => removeItem(item.name)} className="rounded-lg border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:border-black hover:bg-black hover:text-white">Remove</button>
                   </div>
                 ))}
@@ -92,18 +114,17 @@ export default function BasketPage() {
 
                 {isTrade ? (
                   <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-6">
-                    <div className="mb-5">
-                      <h3 className="text-2xl font-black">Order on Account</h3>
-                      <p className="mt-2 text-slate-600">Your approved trade account will be billed on your agreed terms. No card details are required.</p>
-                    </div>
-                    <div className="space-y-4">
-                      <textarea value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} rows={4} required placeholder="Delivery address" className="w-full rounded-xl border border-slate-300 bg-white p-4 outline-none focus:border-black" />
+                    <h3 className="text-2xl font-black">Order on Account</h3>
+                    <p className="mt-2 text-slate-600">Your saved billing and delivery details are shown below. No card details are required.</p>
+                    <div className="mt-6 space-y-5">
+                      <AddressFields title="Billing Address" value={billingAddress} onChange={setBillingAddress} />
+                      <label className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4 font-semibold"><input type="checkbox" checked={sameAsBilling} onChange={(e) => setSameAsBilling(e.target.checked)} className="mt-1 h-5 w-5" />Delivery address is the same as billing address</label>
+                      {!sameAsBilling && <AddressFields title="Delivery Address" value={deliveryAddress} onChange={setDeliveryAddress} />}
                       <input value={purchaseOrder} onChange={(e) => setPurchaseOrder(e.target.value)} placeholder="Purchase order number (optional)" className="w-full rounded-xl border border-slate-300 bg-white p-4 outline-none focus:border-black" />
+                      <p className="text-sm text-slate-500">Need to change your saved address? <Link href="/trade-account" className="font-semibold text-black underline">Manage your trade account</Link></p>
                       {orderError && <div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">{orderError}</div>}
                       {orderMessage && <div className="rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-semibold text-green-700">{orderMessage}</div>}
-                      <button onClick={placeTradeOrder} disabled={placingOrder || !deliveryAddress.trim()} className="w-full rounded-xl bg-black py-4 text-lg font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">
-                        {placingOrder ? "Placing Order…" : "Place Order on Account"}
-                      </button>
+                      <button onClick={placeTradeOrder} disabled={placingOrder || !billingAddress.line1.trim() || !billingAddress.city.trim() || !billingAddress.postcode.trim() || !sameAsBilling && (!deliveryAddress.line1.trim() || !deliveryAddress.city.trim() || !deliveryAddress.postcode.trim())} className="w-full rounded-xl bg-black py-4 text-lg font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50">{placingOrder ? "Placing Order…" : "Place Order on Account"}</button>
                     </div>
                   </div>
                 ) : (
