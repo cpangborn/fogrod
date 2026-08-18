@@ -77,19 +77,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function changePassword(password: string) {
-    if (!user) throw new Error("You must be signed in.");
+    if (!user?.update) throw new Error("Your account session is unavailable. Please sign in again.");
     const updatedUser = await user.update({ password });
     setUser(updatedUser);
   }
 
   async function saveTradeAccountData(data: TradeAccountData) {
-    if (!user) throw new Error("You must be signed in.");
+    if (!user?.update) throw new Error("Your account session is unavailable. Please sign in again.");
 
     const existingMetadata = user.user_metadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
 
-    // Update the authenticated Netlify Identity user directly. This persists
-    // the data in the customer's account instead of only changing local state.
     const updatedUser = await user.update({
       data: {
         ...existingMetadata,
@@ -100,7 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    // Refresh from Netlify so the UI is using the persisted account record.
+    // Refresh from Netlify so the UI reflects the persisted account record.
     const refreshedUser = (await getUser()) || updatedUser;
     setUser(refreshedUser);
   }
