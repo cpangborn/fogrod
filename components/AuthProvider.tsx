@@ -34,6 +34,19 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+async function getFreshUser() {
+  const currentUser = await getUser();
+  if (!currentUser) return null;
+
+  // Netlify Identity can return the locally cached user. Refresh it from the
+  // server so user_metadata is not stale after an account update.
+  if (typeof currentUser.getUserData === "function") {
+    return (await currentUser.getUserData()) || currentUser;
+  }
+
+  return currentUser;
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -49,7 +62,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        const currentUser = await getUser();
+        const currentUser = await getFreshUser();
         if (active) setUser(currentUser);
       } finally {
         if (active) setLoading(false);
@@ -79,20 +92,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function changePassword(password: string) {
     await updateUser({ password });
-    const refreshedUser = await getUser();
+    const refreshedUser = await getFreshUser();
     setUser(refreshedUser);
   }
 
   async function saveTradeAccountData(data: TradeAccountData) {
-    if (!user) throw new Error("You must be signed in.");
+    const currentUser = await getFreshUser();
+    if (!currentUser) throw new Error("Your account session has expired. Please sign in again.");
 
-    const existingMetadata = user.user_metadata || {};
+    const existingMetadata = currentUser.user_metadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
 
-    // @netlify/identity exposes updateUser() for browser-side updates to the
-    // authenticated user's user_metadata. The User returned by getUser() is
-    // intentionally a plain user record and does not have .update().
-    const updatedUser = await updateUser({
+    await updateUser({
       data: {
         ...existingMetadata,
         tradeAccount: {
@@ -102,7 +113,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    setUser(updatedUser || (await getUser()));
+    // Fetch from the server again. This prevents the account page and checkout
+    // from reading stale user_metadata from localStorage after saving.
+    const refreshedUser = await getFreshUser();
+    if (!refreshedUser?.user_metadata?.tradeAccount) {
+      throw new Error("The address could not be confirmed as saved. Please try again.");
+    }
+
+    setUser(refreshedUser);
   }
 
   return (
