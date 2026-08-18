@@ -37,10 +37,6 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 async function getFreshUser() {
   const currentUser = await getUser();
   if (!currentUser) return null;
-
-  // Netlify Identity's User type does not expose getUserData().
-  // getUser() already returns the current authenticated user object,
-  // including its user metadata, so no additional SDK call is required.
   return currentUser;
 }
 
@@ -94,9 +90,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function saveTradeAccountData(data: TradeAccountData) {
     const currentUser = await getFreshUser();
-    if (!currentUser) throw new Error("Your account session has expired. Please sign in again.");
+    if (!currentUser) {
+      throw new Error("Your account session has expired. Please sign in again.");
+    }
 
-    const existingMetadata = currentUser.user_metadata || {};
+    // The installed Netlify Identity SDK exposes metadata as userMetadata.
+    const existingMetadata = currentUser.userMetadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
     const nextMetadata = {
       ...existingMetadata,
@@ -106,9 +105,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     };
 
-    // Write directly to Netlify Identity's authenticated /user endpoint.
-    // This avoids relying on a version-specific helper export and guarantees
-    // the data is stored as user_metadata on the logged-in account.
     if (typeof currentUser.jwt !== "function") {
       throw new Error("Your account session cannot be updated. Please sign in again.");
     }
@@ -135,11 +131,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const savedUser = await response.json();
-    if (!savedUser?.user_metadata?.tradeAccount) {
+    const savedMetadata = savedUser?.user_metadata || savedUser?.userMetadata;
+    if (!savedMetadata?.tradeAccount) {
       throw new Error("The address could not be confirmed as saved.");
     }
 
-    // Refresh the SDK's local user object from the server as well.
     const refreshedUser = await getFreshUser();
     setUser(refreshedUser || savedUser);
   }
@@ -176,5 +172,5 @@ export function tradePrice(price: number, user: any | null) {
 }
 
 export function getTradeAccountData(user: any | null): TradeAccountData {
-  return user?.user_metadata?.tradeAccount || {};
+  return user?.user_metadata?.tradeAccount || user?.userMetadata?.tradeAccount || {};
 }
