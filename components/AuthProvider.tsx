@@ -7,6 +7,7 @@ import {
   login,
   logout,
   requestPasswordRecovery,
+  updateUser,
 } from "@netlify/identity";
 
 export type Address = {
@@ -32,25 +33,6 @@ type AuthContextValue = {
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
-
-async function updateIdentityUser(data: Record<string, unknown>) {
-  const response = await fetch("/.netlify/identity/user", {
-    method: "PUT",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ data }),
-  });
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error("Your account session has expired. Please sign in again.");
-    }
-    const text = await response.text();
-    throw new Error(text || "Unable to update your account.");
-  }
-
-  return response.json();
-}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
@@ -96,28 +78,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function changePassword(password: string) {
-    const updatedUser = await updateIdentityUser({ password });
-    setUser(updatedUser);
+    await updateUser({ password });
+    const refreshedUser = await getUser();
+    setUser(refreshedUser);
   }
 
   async function saveTradeAccountData(data: TradeAccountData) {
-    const currentUser = await getUser();
-    if (!currentUser) throw new Error("Your account session has expired. Please sign in again.");
+    if (!user) throw new Error("You must be signed in.");
 
-    const existingMetadata = currentUser.user_metadata || {};
+    const existingMetadata = user.user_metadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
 
-    const updatedUser = await updateIdentityUser({
-      ...existingMetadata,
-      tradeAccount: {
-        ...existingTradeData,
-        ...data,
+    // @netlify/identity exposes updateUser() for browser-side updates to the
+    // authenticated user's user_metadata. The User returned by getUser() is
+    // intentionally a plain user record and does not have .update().
+    const updatedUser = await updateUser({
+      data: {
+        ...existingMetadata,
+        tradeAccount: {
+          ...existingTradeData,
+          ...data,
+        },
       },
     });
 
-    // Fetch the persisted record again so checkout/account screens use the saved data.
-    const refreshedUser = (await getUser()) || updatedUser;
-    setUser(refreshedUser);
+    setUser(updatedUser || (await getUser()));
   }
 
   return (
