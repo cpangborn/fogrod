@@ -33,35 +33,32 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 w-full max-w-[1600px] items-center px-4 xl:px-8">
+      <div className="mx-auto flex h-20 w-full max-w-[1800px] items-center px-4 xl:px-8">
         <Link href="/" onClick={closeMobileMenu} className="flex shrink-0 items-center">
           <img src="/images/fogrod-logo-transparent.png" alt="FOGRod®" className="h-10 w-auto object-contain" />
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-4 lg:flex xl:gap-6">
+        <nav className="ml-auto hidden items-center gap-3 lg:flex xl:gap-5">
           {links.map((link) => (
             <Link key={link.href} href={link.href} className={`whitespace-nowrap text-sm font-medium transition xl:text-[15px] ${pathname === link.href ? "text-black" : "text-slate-500 hover:text-black"}`}>
               {link.label}
             </Link>
           ))}
-          <Link href="/trade-request" className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-semibold transition ${pathname === "/trade-request" ? "border-black bg-black text-white" : "border-slate-300 text-slate-700 hover:border-black hover:text-black"}`}>
-            Request Trade Account
+          <Link href="/trade-request" className={`whitespace-nowrap rounded-xl border border-black px-3 py-2 text-sm font-bold transition ${pathname === "/trade-request" ? "bg-black text-white" : "bg-white text-black hover:bg-black hover:text-white"}`}>
+            Trade Account
           </Link>
         </nav>
 
-        <div className="ml-4 flex shrink-0 items-center gap-2 xl:ml-6 xl:gap-3">
+        <div className="ml-3 flex shrink-0 items-center gap-2 xl:ml-5 xl:gap-3">
           <Link href={isTrade ? "/trade-account" : "/trade-login"} onClick={closeMobileMenu} aria-label="Trade account" className={`hidden h-11 items-center gap-2 rounded-xl border px-4 text-sm font-semibold transition lg:flex ${isTrade ? "border-black bg-black text-white" : "border-slate-300 text-slate-700 hover:border-black hover:text-black"}`}>
             <UserRound size={17} />
             {isTrade ? "P&S Trade" : "Trade Login"}
           </Link>
-
           <Link href="/basket" onClick={closeMobileMenu} aria-label="Shopping basket" className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 text-slate-700 transition hover:border-black hover:text-black">
             <ShoppingCart size={19} />
             {totalItems > 0 && <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-black text-xs font-bold text-white">{totalItems}</span>}
           </Link>
-
           <Link href="/shop" className="hidden h-11 items-center rounded-xl bg-black px-5 text-sm font-semibold text-white transition hover:bg-slate-800 lg:inline-flex">Shop Now</Link>
-
           <button type="button" onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label={mobileMenuOpen ? "Close menu" : "Open menu"} className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-300 text-black transition hover:border-black lg:hidden">
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
@@ -99,16 +96,12 @@ export default function Navbar() {
                   {link.label}
                 </Link>
               ))}
-              <Link href="/trade-request" onClick={closeMobileMenu} className="mt-5 rounded-xl border border-slate-300 px-6 py-4 text-center font-semibold text-black transition hover:border-black">
-                Request a Trade Account
-              </Link>
+              <Link href="/trade-request" onClick={closeMobileMenu} className="mt-5 rounded-xl bg-black px-6 py-4 text-center font-bold text-white transition hover:bg-slate-800">Request a Trade Account</Link>
               <Link href={isTrade ? "/trade-account" : "/trade-login"} onClick={closeMobileMenu} className="mt-3 flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-6 py-4 text-center font-semibold text-black transition hover:border-black">
                 <UserRound size={18} />
                 {isTrade ? "P&S Trade Account" : "Trade Login"}
               </Link>
-              {user && (
-                <button type="button" onClick={() => { signOut(); closeMobileMenu(); }} className="mt-3 rounded-xl bg-slate-100 px-6 py-4 text-center font-semibold text-slate-700">Sign Out</button>
-              )}
+              {user && <button type="button" onClick={() => { signOut(); closeMobileMenu(); }} className="mt-3 rounded-xl bg-slate-100 px-6 py-4 text-center font-semibold text-slate-700">Sign Out</button>}
               <Link href="/shop" onClick={closeMobileMenu} className="mt-3 rounded-xl bg-black px-6 py-4 text-center font-semibold text-white transition hover:bg-slate-800">Shop Now</Link>
             </nav>
           </div>
