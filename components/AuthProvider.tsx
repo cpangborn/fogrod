@@ -7,7 +7,6 @@ import {
   login,
   logout,
   requestPasswordRecovery,
-  updateUser,
 } from "@netlify/identity";
 
 export type Address = {
@@ -78,7 +77,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function changePassword(password: string) {
-    const updatedUser = await updateUser({ password });
+    if (!user) throw new Error("You must be signed in.");
+    const updatedUser = await user.update({ password });
     setUser(updatedUser);
   }
 
@@ -88,7 +88,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const existingMetadata = user.user_metadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
 
-    const updatedUser = await updateUser({
+    // Update the authenticated Netlify Identity user directly. This persists
+    // the data in the customer's account instead of only changing local state.
+    const updatedUser = await user.update({
       data: {
         ...existingMetadata,
         tradeAccount: {
@@ -98,7 +100,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     });
 
-    setUser(updatedUser);
+    // Refresh from Netlify so the UI is using the persisted account record.
+    const refreshedUser = (await getUser()) || updatedUser;
+    setUser(refreshedUser);
   }
 
   return (
