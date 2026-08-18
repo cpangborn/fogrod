@@ -1,13 +1,20 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { getUser, handleAuthCallback, login, logout } from "@netlify/identity";
+import {
+  getUser,
+  handleAuthCallback,
+  login,
+  logout,
+  requestPasswordRecovery,
+} from "@netlify/identity";
 
 type AuthContextValue = {
   user: any | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -51,8 +58,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
+  async function resetPassword(email: string) {
+    await requestPasswordRecovery(email);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{ user, loading, signIn, signOut, resetPassword }}
+    >
       {children}
     </AuthContext.Provider>
   );
