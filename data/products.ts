@@ -16,7 +16,7 @@ export const products = [
       "3 Electrodes",
       "1.6ft Rod",
       "30ft Cable",
-      "316 Stainless Steel",
+      "ALN6X",
       "Industrial Wastewater Use",
     ],
   },
@@ -38,7 +38,7 @@ export const products = [
       "5 Electrodes",
       "2.5ft Rod",
       "30ft Cable",
-      "316 Stainless Steel",
+      "ALN6X",
     ],
   },
 
@@ -59,7 +59,7 @@ export const products = [
       "10 Electrodes",
       "3ft Rod",
       "50ft Cable",
-      "316 Stainless Steel",
+      "ALN6X",
     ],
   },
 
@@ -80,7 +80,7 @@ export const products = [
       "10 Electrodes",
       "5ft Rod",
       "50ft Cable",
-      "316 Stainless Steel",
+      "ALN6X",
     ],
   },
 
@@ -101,7 +101,7 @@ export const products = [
       "10 Electrodes",
       "7.5ft Rod",
       "50ft Cable",
-      "316 Stainless Steel",
+      "ALN6X",
     ],
   },
 

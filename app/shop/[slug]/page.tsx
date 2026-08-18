@@ -234,7 +234,7 @@ function ProductPageContent({
                         </p>
 
                         <p className="mt-2 text-xl font-bold">
-                          316 Stainless Steel
+                          ALN6X
                         </p>
 
                       </div>
@@ -339,7 +339,7 @@ function ProductPageContent({
                   </td>
 
                   <td className="p-5 text-slate-600">
-                    316 Stainless Steel
+                    ALN6X
                   </td>
 
                 </tr>
