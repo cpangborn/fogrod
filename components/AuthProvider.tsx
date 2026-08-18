@@ -94,7 +94,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Your account session has expired. Please sign in again.");
     }
 
-    // The installed Netlify Identity SDK exposes metadata as userMetadata.
     const existingMetadata = currentUser.userMetadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
     const nextMetadata = {
@@ -105,39 +104,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       },
     };
 
-    if (typeof currentUser.jwt !== "function") {
-      throw new Error("Your account session cannot be updated. Please sign in again.");
-    }
+    // Use the SDK's supported authenticated user update rather than
+    // reaching into undocumented User properties such as jwt().
+    await updateUser({ data: nextMetadata });
 
-    const token = await currentUser.jwt(true);
-    const response = await fetch("/.netlify/identity/user", {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ data: nextMetadata }),
-    });
-
-    if (!response.ok) {
-      let detail = "Unable to save your account details.";
-      try {
-        const body = await response.json();
-        detail = body?.msg || body?.message || detail;
-      } catch {
-        // Keep the friendly fallback message.
-      }
-      throw new Error(detail);
-    }
-
-    const savedUser = await response.json();
-    const savedMetadata = savedUser?.user_metadata || savedUser?.userMetadata;
+    const refreshedUser = await getFreshUser();
+    const savedMetadata = refreshedUser?.userMetadata;
     if (!savedMetadata?.tradeAccount) {
       throw new Error("The address could not be confirmed as saved.");
     }
 
-    const refreshedUser = await getFreshUser();
-    setUser(refreshedUser || savedUser);
+    setUser(refreshedUser);
   }
 
   return (
