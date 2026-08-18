@@ -38,10 +38,9 @@ async function getFreshUser() {
   const currentUser = await getUser();
   if (!currentUser) return null;
 
-  if (typeof currentUser.getUserData === "function") {
-    await currentUser.getUserData();
-  }
-
+  // Netlify Identity's User type does not expose getUserData().
+  // getUser() already returns the current authenticated user object,
+  // including its user metadata, so no additional SDK call is required.
   return currentUser;
 }
 
