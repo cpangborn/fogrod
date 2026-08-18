@@ -33,6 +33,25 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+async function updateIdentityUser(data: Record<string, unknown>) {
+  const response = await fetch("/.netlify/identity/user", {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data }),
+  });
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error("Your account session has expired. Please sign in again.");
+    }
+    const text = await response.text();
+    throw new Error(text || "Unable to update your account.");
+  }
+
+  return response.json();
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,28 +96,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function changePassword(password: string) {
-    if (!user?.update) throw new Error("Your account session is unavailable. Please sign in again.");
-    const updatedUser = await user.update({ password });
+    const updatedUser = await updateIdentityUser({ password });
     setUser(updatedUser);
   }
 
   async function saveTradeAccountData(data: TradeAccountData) {
-    if (!user?.update) throw new Error("Your account session is unavailable. Please sign in again.");
+    const currentUser = await getUser();
+    if (!currentUser) throw new Error("Your account session has expired. Please sign in again.");
 
-    const existingMetadata = user.user_metadata || {};
+    const existingMetadata = currentUser.user_metadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
 
-    const updatedUser = await user.update({
-      data: {
-        ...existingMetadata,
-        tradeAccount: {
-          ...existingTradeData,
-          ...data,
-        },
+    const updatedUser = await updateIdentityUser({
+      ...existingMetadata,
+      tradeAccount: {
+        ...existingTradeData,
+        ...data,
       },
     });
 
-    // Refresh from Netlify so the UI reflects the persisted account record.
+    // Fetch the persisted record again so checkout/account screens use the saved data.
     const refreshedUser = (await getUser()) || updatedUser;
     setUser(refreshedUser);
   }
