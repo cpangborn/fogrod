@@ -44,6 +44,9 @@ export default function Navbar() {
               {link.label}
             </Link>
           ))}
+          <Link href="/trade-request" className={`whitespace-nowrap rounded-xl border px-4 py-2 text-sm font-semibold transition ${pathname === "/trade-request" ? "border-black bg-black text-white" : "border-slate-300 text-slate-700 hover:border-black hover:text-black"}`}>
+            Request Trade Account
+          </Link>
         </nav>
 
         <div className="ml-4 flex shrink-0 items-center gap-2 xl:ml-6 xl:gap-3">
