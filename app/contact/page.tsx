@@ -21,7 +21,7 @@ export default function ContactPage() {
     const formData = new FormData(form);
 
     try {
-      const response = await fetch("/contact-form.html", {
+      const response = await fetch("/__forms.html", {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -80,15 +80,10 @@ export default function ContactPage() {
               <form
                 name="contact"
                 method="POST"
-                data-netlify="true"
                 onSubmit={handleSubmit}
                 className="mt-8 space-y-6"
               >
-                <input
-                  type="hidden"
-                  name="form-name"
-                  value="contact"
-                />
+                <input type="hidden" name="form-name" value="contact" />
 
                 <input
                   type="text"
