@@ -7,7 +7,6 @@ import {
   login,
   logout,
   requestPasswordRecovery,
-  updateUser,
 } from "@netlify/identity";
 
 export type Address = {
@@ -38,10 +37,10 @@ async function getFreshUser() {
   const currentUser = await getUser();
   if (!currentUser) return null;
 
-  // Netlify Identity can return the locally cached user. Refresh it from the
-  // server so user_metadata is not stale after an account update.
+  // getUser() may return the cached Identity user. getUserData() refreshes
+  // that same user object from the Identity server.
   if (typeof currentUser.getUserData === "function") {
-    return (await currentUser.getUserData()) || currentUser;
+    await currentUser.getUserData();
   }
 
   return currentUser;
@@ -64,6 +63,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const currentUser = await getFreshUser();
         if (active) setUser(currentUser);
+      } catch {
+        if (active) setUser(null);
       } finally {
         if (active) setLoading(false);
       }
@@ -78,6 +79,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   async function signIn(email: string, password: string) {
     const loggedInUser = await login(email, password);
+    if (typeof loggedInUser?.getUserData === "function") {
+      await loggedInUser.getUserData();
+    }
     setUser(loggedInUser);
   }
 
@@ -91,9 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   async function changePassword(password: string) {
-    await updateUser({ password });
-    const refreshedUser = await getFreshUser();
-    setUser(refreshedUser);
+    const currentUser = await getFreshUser();
+    if (!currentUser) throw new Error("Your account session has expired. Please sign in again.");
+
+    const updatedUser = await currentUser.update({ password });
+    setUser(updatedUser || currentUser);
   }
 
   async function saveTradeAccountData(data: TradeAccountData) {
@@ -102,25 +108,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const existingMetadata = currentUser.user_metadata || {};
     const existingTradeData = existingMetadata.tradeAccount || {};
+    const nextTradeData = {
+      ...existingTradeData,
+      ...data,
+    };
 
-    await updateUser({
+    // Use the authenticated Identity user's canonical update method. This
+    // writes user_metadata to Netlify Identity rather than only changing the
+    // React/localStorage copy of the user.
+    const updatedUser = await currentUser.update({
       data: {
         ...existingMetadata,
-        tradeAccount: {
-          ...existingTradeData,
-          ...data,
-        },
+        tradeAccount: nextTradeData,
       },
     });
 
-    // Fetch from the server again. This prevents the account page and checkout
-    // from reading stale user_metadata from localStorage after saving.
-    const refreshedUser = await getFreshUser();
-    if (!refreshedUser?.user_metadata?.tradeAccount) {
+    // Verify the value by fetching the user again from the Identity server.
+    const verifiedUser = await getFreshUser();
+    const savedTradeData = verifiedUser?.user_metadata?.tradeAccount;
+    if (
+      !verifiedUser ||
+      savedTradeData?.billingAddress?.line1 !== nextTradeData.billingAddress?.line1 ||
+      savedTradeData?.billingAddress?.postcode !== nextTradeData.billingAddress?.postcode ||
+      savedTradeData?.deliveryAddress?.line1 !== nextTradeData.deliveryAddress?.line1 ||
+      savedTradeData?.deliveryAddress?.postcode !== nextTradeData.deliveryAddress?.postcode
+    ) {
       throw new Error("The address could not be confirmed as saved. Please try again.");
     }
 
-    setUser(refreshedUser);
+    setUser(updatedUser || verifiedUser);
   }
 
   return (
