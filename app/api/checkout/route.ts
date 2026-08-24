@@ -38,6 +38,17 @@ export async function POST(req: Request) {
       };
     });
 
+    // Fixed £20 delivery charge, subject to the same VAT rate as the products.
+    line_items.push({
+      price_data: {
+        currency: "gbp",
+        product_data: { name: "Delivery" },
+        unit_amount: 2000,
+      },
+      quantity: 1,
+      tax_rates: [taxRateId],
+    });
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
