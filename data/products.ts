@@ -6,7 +6,7 @@ export const products = [
     electrodes: 3,
     cable: 30,
     rod: 1.6,
-    price: 265,
+    price: 300,
     image: "/images/fogrod.jpg",
     shortDescription:
       "1.6ft conductive level sensing system with 30ft cable.",
@@ -28,7 +28,7 @@ export const products = [
     electrodes: 5,
     cable: 30,
     rod: 2.5,
-    price: 345,
+    price: 395,
     image: "/images/fogrod.jpg",
     shortDescription:
       "2.5ft conductive level sensing system with 30ft cable.",
@@ -49,7 +49,7 @@ export const products = [
     electrodes: 10,
     cable: 50,
     rod: 3,
-    price: 525,
+    price: 595,
     image: "/images/fogrod.jpg",
     shortDescription:
       "3ft conductive level sensing system with 50ft cable.",
@@ -70,7 +70,7 @@ export const products = [
     electrodes: 10,
     cable: 50,
     rod: 5,
-    price: 535,
+    price: 625,
     image: "/images/fogrod.jpg",
     shortDescription:
       "5ft conductive level sensing system with 50ft cable.",
@@ -91,7 +91,7 @@ export const products = [
     electrodes: 10,
     cable: 50,
     rod: 7.5,
-    price: 575,
+    price: 650,
     image: "/images/fogrod.jpg",
     shortDescription:
       "7.5ft conductive level sensing system with 50ft cable.",
