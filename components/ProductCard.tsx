@@ -17,6 +17,7 @@ type Product = {
   rod?: number;
   cable?: string | number;
   electrodes?: number;
+  inStock?: boolean;
 };
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -27,6 +28,7 @@ export default function ProductCard({ product }: { product: Product }) {
 
   const displayPrice = tradePrice(product.price, user);
   const isTrade = isPandSTankers(user);
+  const inStock = product.inStock !== false;
 
   const displayCable = (cable: string | number) => {
     if (typeof cable === "number") return convertFeet(cable);
@@ -36,7 +38,7 @@ export default function ProductCard({ product }: { product: Product }) {
   };
 
   const handleAddToBasket = () => {
-    // Keep the base retail price in the cart. The basket applies the trade discount once.
+    if (!inStock) return;
     addItem({ name: product.name, price: product.price, image: product.image });
     setAdded(true);
     setTimeout(() => setAdded(false), 1800);
@@ -62,20 +64,24 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
 
         <div className="mt-auto pt-6">
-          {isTrade && !loading ? (
-            <div>
-              <div className="text-sm font-semibold text-slate-400 line-through">£{product.price.toFixed(2)}</div>
-              <div className="text-3xl font-black text-black">£{displayPrice.toFixed(2)} + VAT</div>
-              <div className="mt-1 text-sm font-bold text-green-700">30% Trade Price</div>
-            </div>
+          {inStock ? (
+            isTrade && !loading ? (
+              <div>
+                <div className="text-sm font-semibold text-slate-400 line-through">£{product.price.toFixed(2)}</div>
+                <div className="text-3xl font-black text-black">£{displayPrice.toFixed(2)} + VAT</div>
+                <div className="mt-1 text-sm font-bold text-green-700">30% Trade Price</div>
+              </div>
+            ) : (
+              <div className="text-3xl font-black text-black">£{product.price.toFixed(2)} + VAT</div>
+            )
           ) : (
-            <div className="text-3xl font-black text-black">£{product.price.toFixed(2)} + VAT</div>
+            <div className="text-2xl font-black text-red-600">Out of Stock</div>
           )}
 
           <div className="mt-6 space-y-3">
             <Link href={`/shop/${product.slug}`} className="block w-full rounded-xl bg-black py-3 text-center font-semibold text-white transition hover:bg-slate-800">View Product</Link>
-            <button type="button" onClick={handleAddToBasket} className={`flex w-full items-center justify-center gap-2 rounded-xl border py-3 font-semibold transition-all duration-300 ${added ? "scale-[1.03] border-green-500 bg-green-500 text-white shadow-lg shadow-green-500/25" : "border-slate-300 bg-white text-black hover:border-black hover:bg-slate-50"}`}>
-              {added ? <><Check size={20} strokeWidth={3} className="animate-bounce" /><span>Added to Basket!</span></> : <><ShoppingCart size={19} /><span>Add to Basket</span></>}
+            <button type="button" onClick={handleAddToBasket} disabled={!inStock} className={`flex w-full items-center justify-center gap-2 rounded-xl border py-3 font-semibold transition-all duration-300 ${!inStock ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400" : added ? "scale-[1.03] border-green-500 bg-green-500 text-white shadow-lg shadow-green-500/25" : "border-slate-300 bg-white text-black hover:border-black hover:bg-slate-50"}`}>
+              {inStock ? (added ? <><Check size={20} strokeWidth={3} className="animate-bounce" /><span>Added to Basket!</span></> : <><ShoppingCart size={19} /><span>Add to Basket</span></>) : <span>Out of Stock</span>}
             </button>
           </div>
         </div>
