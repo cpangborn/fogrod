@@ -75,6 +75,7 @@ export default function Footer() {
                 ["Applications", "/applications"],
                 ["Technical Support", "/support"],
                 ["Contact", "/contact"],
+                ["MultiTrode Replacement", "/flygt-multitrode-replacement"],
               ].map(([label, href]) => (
                 <li key={label}>
                   <Link
