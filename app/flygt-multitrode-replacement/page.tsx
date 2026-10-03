@@ -1,6 +1,29 @@
-"use client";
-
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Flygt MultiTrode Replacement | FOGRod®",
+  description: "FOGRod® multi-electrode conductive level probe for suitable wastewater applications requiring a replacement for the discontinued Flygt MultiTrode probe.",
+  keywords: [
+    "Flygt MultiTrode replacement",
+    "Flygt MultiTrode probe replacement",
+    "MultiTrode replacement",
+    "MultiTrode probe replacement UK",
+    "Flygt level probe replacement",
+    "Flygt MultiTrode",
+    "wastewater level probe",
+    "FOGRod",
+  ],
+  alternates: { canonical: "https://fogrod.co.uk/flygt-multitrode-replacement" },
+  openGraph: {
+    title: "Flygt MultiTrode Replacement | FOGRod®",
+    description: "FOGRod® is a multi-electrode conductive level probe developed as a direct replacement for the discontinued Xylem Flygt MultiTrode probe for suitable wastewater applications.",
+    url: "https://fogrod.co.uk/flygt-multitrode-replacement",
+    siteName: "FOGRod",
+    locale: "en_GB",
+    type: "website",
+  },
+};
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
