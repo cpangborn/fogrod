@@ -12,16 +12,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/support",
     "/contact",
     "/flygt-multitrode-replacement",
+    "/blog/fogrod-vs-floats-ultrasonic-radar",
     "/privacy",
     "/terms",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
   }));
-
-  { url: `${baseUrl}/blog/fogrod-vs-floats-ultrasonic-radar`, lastModified: new Date() },
-    ...products.length ? [] : [],
-  ];
 
   const productPages = products.map((product) => ({
     url: `${baseUrl}/shop/${product.slug}`,
