@@ -33,6 +33,12 @@ export const metadata: Metadata = {
     "Industrial Controls",
     "Level Probe",
     "Float Switch Alternative",
+    "Flygt MultiTrode",
+    "Flygt MultiTrode Replacement",
+    "MultiTrode Replacement",
+    "MultiTrode Probe Replacement",
+    "Flygt Level Probe",
+    "Wastewater Level Probe",
     "Pump Control",
     "Wastewater Monitoring",
   ],
@@ -43,7 +49,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "FOGRod®",
     description:
-      "Professional wastewater level detection systems engineered for reliability.",
+      "FOGRod® conductive level sensing electrodes, including a direct replacement for the discontinued Flygt MultiTrode probe in suitable wastewater applications.",
     url: "https://fogrod.co.uk",
     siteName: "FOGRod",
     locale: "en_GB",
