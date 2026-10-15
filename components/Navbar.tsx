@@ -25,6 +25,7 @@ export default function Navbar() {
     { href: "/", label: "Home" },
     { href: "/shop", label: "Shop" },
     { href: "/applications", label: "Applications" },
+    { href: "/float-switch-replacement", label: "Float Switch Replacement" },
     { href: "/blog/fogrod-vs-floats-ultrasonic-radar", label: "FOGRod V FLOATS" },
     { href: "/flygt-multitrode", label: "Flygt MultiTrode" },
     { href: "/downloads", label: "Downloads" },
