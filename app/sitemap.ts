@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/support",
     "/contact",
     "/flygt-multitrode-replacement",
+    "/float-switch-replacement",
     "/blog/fogrod-vs-floats-ultrasonic-radar",
     "/privacy",
     "/terms",
