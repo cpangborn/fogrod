@@ -49,7 +49,7 @@ export const products = [
     electrodes: 10,
     cable: 50,
     rod: 3,
-    price: 500,
+    price: 595,
     inStock: false,
     image: "/images/fogrod.jpg",
     shortDescription:
