@@ -50,7 +50,7 @@ export const products = [
     cable: 50,
     rod: 3,
     price: 595,
-    inStock: false,
+    inStock: true,
     image: "/images/fogrod.jpg",
     shortDescription:
       "3ft conductive level sensing system with 50ft cable.",
