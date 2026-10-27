@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   ShieldCheck,
   Gauge,
@@ -84,6 +85,23 @@ export default function WhyFogrod() {
               </div>
             );
           })}
+        </div>
+
+        <div className="mt-14 rounded-3xl border border-slate-200 bg-white p-8 md:flex md:items-center md:justify-between md:gap-8">
+          <div>
+            <h3 className="text-2xl font-black text-black md:text-3xl">
+              Looking for an alternative to sewage pump float switches?
+            </h3>
+            <p className="mt-3 max-w-2xl leading-7 text-slate-600">
+              Learn how FOGRod conductive electrodes compare with conventional float switches for wastewater level control, and what to check before replacing an existing system.
+            </p>
+          </div>
+          <Link
+            href="/float-switch-replacement"
+            className="mt-6 inline-flex shrink-0 items-center justify-center rounded-xl bg-black px-6 py-4 font-bold text-white transition hover:bg-slate-800 md:mt-0"
+          >
+            Float switch replacement guide
+          </Link>
         </div>
 
       </div>
