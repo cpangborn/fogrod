@@ -4,9 +4,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Float Switch Replacement for Sewage Pumping Stations",
+  title: "Float Switches for Sewage Pumps | FOGRod Alternative",
   description:
-    "Looking for an alternative to sewage pump float switches? Discover how FOGRod conductive electrodes provide multi-level wastewater detection. Check retrofit suitability.",
+    "Searching for sewage pump float switches or a float switch alternative? FOGRod conductive electrodes provide multi-level wastewater detection in suitable pumping stations. Check compatibility before replacing existing controls.",
   alternates: { canonical: "https://fogrod.co.uk/float-switch-replacement" },
   keywords: [
     "float switch replacement",
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     "wet well level detection",
   ],
   openGraph: {
-    title: "Float Switch Replacement for Sewage Pumping Stations | FOGRod",
+    title: "Sewage Pump Float Switch Alternative | FOGRod",
     description:
       "Explore FOGRod conductive electrode level detection as an alternative to conventional float switches in suitable wastewater pumping station applications.",
     url: "https://fogrod.co.uk/float-switch-replacement",
